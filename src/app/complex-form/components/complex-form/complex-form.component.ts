@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { map, Observable, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-complex-form',
@@ -29,11 +30,15 @@ export class ComplexFormComponent implements OnInit {
   confirmPasswordControl!: FormControl;
   loginInfoForm!: FormGroup;
 
+  showEmailControl$!: Observable<boolean>;
+  showPhoneControl$!: Observable<boolean>;
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initFormControls();
     this.initMainForm();
+    this.initFormObservable();
   }
 
   private initMainForm(): void {
@@ -74,7 +79,26 @@ export class ComplexFormComponent implements OnInit {
     });
   }
 
+  initFormObservable() {
+    this.showEmailControl$ = this.contactPreferenceControl.valueChanges.pipe(
+      startWith(this.contactPreferenceControl.value),
+      map((preference) => preference === 'email'), // preference === email vaut true
+      // equivaut à:
+      // if (preference === 'email') {
+      // return true;
+      // } else { return false}
+
+      //pour générer une première emission, l'observable startWith va d'abord emettre true et
+      // emettra ensuite les valuechanges transformées selon les conditions
+      // startWith(true) mais n'est pas bien maintenable
+    );
+    startWith(this.contactPreferenceControl.value),
+    this.showPhoneControl$ = this.contactPreferenceControl.valueChanges.pipe(
+      map((preference) => preference === 'phone'),
+    );
+  }
+
   onSubmitForm() {
-    console.log(this.mainForm.value)
+    console.log(this.mainForm.value);
   }
 }
