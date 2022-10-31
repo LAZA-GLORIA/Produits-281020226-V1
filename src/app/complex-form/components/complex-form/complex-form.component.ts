@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { map, Observable, startWith, tap } from 'rxjs';
+import { ComplexFormService } from '../../services/complex-form.service';
 
 @Component({
   selector: 'app-complex-form',
@@ -14,6 +15,9 @@ import { map, Observable, startWith, tap } from 'rxjs';
   styleUrls: ['./complex-form.component.scss'],
 })
 export class ComplexFormComponent implements OnInit {
+  // indique l'état de chargement
+  loading = false;
+
   mainForm!: FormGroup;
   personalInfoForm!: FormGroup;
   contactPreferenceControl!: FormControl;
@@ -34,7 +38,10 @@ export class ComplexFormComponent implements OnInit {
   showEmailControl$!: Observable<boolean>;
   showPhoneControl$!: Observable<boolean>;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private complexFormService: ComplexFormService
+  ) {}
 
   ngOnInit(): void {
     this.initFormControls();
@@ -177,7 +184,28 @@ export class ComplexFormComponent implements OnInit {
   }
 
   onSubmitForm() {
-    console.log(this.mainForm.value);
+    console.log(this.mainForm.value)
+    // desactive le bouton et met en place le spinner avec loading true- - quand l'utilisateur clique sur le bouton
+    this.loading = true;
+    // this.mainForm.value correspond bien ici au type d'objet complexForm en paramètre dans la methode du service
+    this.complexFormService.saveUserInfo(this.mainForm.value).pipe(
+      tap((saved) => {
+        this.loading = false;
+        if (saved) {
+          this.resetForm();
+          // this.mainForm.reset();
+          // this.contactPreferenceControl.patchValue('email'); // réinjecte la valeur par défaut du radio que reset aura éffacé aussi
+          // attention patchValue emet un observable
+        } else {
+          console.error("Echec de l'enregistrement ");
+        }
+      })
+    ).subscribe();
+  }
+
+  private resetForm() {
+    this.mainForm.reset();
+    this.contactPreferenceControl.patchValue('email');
   }
 
   // Récuperer l'erreur qui correspond à l'état actuel du formulaire/formControl pour une gestion d'erreur personnalisée :
