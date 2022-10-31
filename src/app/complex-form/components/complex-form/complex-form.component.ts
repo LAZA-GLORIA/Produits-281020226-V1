@@ -5,7 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { map, Observable, startWith } from 'rxjs';
+import { map, Observable, startWith, tap } from 'rxjs';
 
 @Component({
   selector: 'app-complex-form',
@@ -81,6 +81,8 @@ export class ComplexFormComponent implements OnInit {
 
   initFormObservable() {
     this.showEmailControl$ = this.contactPreferenceControl.valueChanges.pipe(
+      // Lorsqu'on a pas encore de valueChanges on veut quand même déclencher
+      // l'observable showEmailControl$ avec la valeur actuelle du formControl
       startWith(this.contactPreferenceControl.value),
       map((preference) => preference === 'email'), // preference === email vaut true
       // equivaut à:
@@ -90,12 +92,87 @@ export class ComplexFormComponent implements OnInit {
 
       //pour générer une première emission, l'observable startWith va d'abord emettre true et
       // emettra ensuite les valuechanges transformées selon les conditions
-      // startWith(true) mais n'est pas bien maintenable
+      // startWith(true) mais n'est pas bien maintenable, utiliser la valeur du champ qui est bcp plus robuste
+      tap((showEmailControl) =>
+        // {
+        //   if (showEmailControl) {
+        //     // Validators
+        //     this.emailControl.addValidators([
+        //       Validators.required,
+        //       Validators.email,
+        //     ]);
+        //     this.confirmEmailControl.addValidators([
+        //       Validators.required,
+        //       Validators.email,
+        //     ]);
+        //   } else {
+        //     this.emailControl.clearValidators();
+        //     this.confirmEmailControl.clearValidators();
+        //   }
+        //   this.emailControl.updateValueAndValidity();
+        //   this.confirmEmailControl.updateValueAndValidity();
+        // }
+        this.setEmailValidators(showEmailControl)
+      )
     );
     startWith(this.contactPreferenceControl.value),
-    this.showPhoneControl$ = this.contactPreferenceControl.valueChanges.pipe(
-      map((preference) => preference === 'phone'),
-    );
+      (this.showPhoneControl$ = this.contactPreferenceControl.valueChanges.pipe(
+        map((preference) => preference === 'phone'),
+        tap((showPhoneControl) =>
+          // {
+          //   if (showPhoneControl) {
+          //     // ajouter Validators
+          //     // On laisse ses formControl disponible en créant des formControl indépendant sinon aurait fait
+          //     // this.mainForm.getControl.get('phone).addValidators
+          //     this.phoneControl.addValidators([
+          //       Validators.required,
+          //       Validators.minLength(10),
+          //       Validators.maxLength(10),
+          //     ]);
+          //   } else {
+          //     // retirer Validators
+          //     this.phoneControl.clearValidators();
+          //   }
+          //   // après avoir appelé ou modifié un Validators il faut appeler sur ce formControl la méthdoe suivante
+          //   this.phoneControl.updateValueAndValidity();
+          // }
+          this.setPhoneValidators(showPhoneControl)
+        )
+      ));
+  }
+
+  private setEmailValidators(showEmailControl: boolean) {
+    if (showEmailControl) {
+      // Validators
+      this.emailControl.addValidators([Validators.required, Validators.email]);
+      this.confirmEmailControl.addValidators([
+        Validators.required,
+        Validators.email,
+      ]);
+    } else {
+      this.emailControl.clearValidators();
+      this.confirmEmailControl.clearValidators();
+    }
+    this.emailControl.updateValueAndValidity();
+    this.confirmEmailControl.updateValueAndValidity();
+  }
+
+  private setPhoneValidators(showPhoneControl: boolean) {
+    if (showPhoneControl) {
+      // ajouter Validators
+      // On laisse ses formControl disponible en créant des formControl indépendant sinon aurait fait
+      // this.mainForm.getControl.get('phone).addValidators
+      this.phoneControl.addValidators([
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(10),
+      ]);
+    } else {
+      // retirer Validators
+      this.phoneControl.clearValidators();
+    }
+    // après avoir appelé ou modifié un Validators il faut appeler sur ce formControl la méthdoe suivante
+    this.phoneControl.updateValueAndValidity();
   }
 
   onSubmitForm() {
