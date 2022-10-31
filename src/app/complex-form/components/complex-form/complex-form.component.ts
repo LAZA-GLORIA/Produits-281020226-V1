@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -177,5 +178,22 @@ export class ComplexFormComponent implements OnInit {
 
   onSubmitForm() {
     console.log(this.mainForm.value);
+  }
+
+  // Récuperer l'erreur qui correspond à l'état actuel du formulaire/formControl pour une gestion d'erreur personnalisée :
+  // retourner un texte pour chaque typer d'erreur
+  // AbstractControl concerne les formControl et les formGroup, on peut passer les 2 à cette méthode
+  getFormControlErrorText(leControl: AbstractControl) {
+    if (leControl.hasError('required')) {
+      return 'Ce champ est requis';
+    } else if (leControl.hasError('email')) {
+      return "Merci d'entrer une adresse mail valide";
+    } else if (leControl.hasError('minlength')) {
+      return 'Ce numéro de téléphone ne contient pas assez de chiffres';
+    } else if (leControl.hasError('maxlength')) {
+      return 'Ce numéro de téléphone contient trop de chiffres';
+    } else {
+      return 'Ce champ contient une erreur';
+    }
   }
 }
