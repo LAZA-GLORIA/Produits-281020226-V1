@@ -5,6 +5,13 @@ import { HomeComponent } from './core/components/home/home.component';
 const routes: Routes = [
   { path: '', component: HomeComponent }, // => localhost:4200
   { path: 'home', component: HomeComponent }, // => localhost:4200/home
+  {
+    path: 'complex-form',
+    loadChildren: () =>
+      import('./complex-form/complex-form.module').then(
+        (m) => m.ComplexFormModule
+      ),
+  },
   { path: '**', redirectTo: '/home', pathMatch: 'full' },
 ];
 
