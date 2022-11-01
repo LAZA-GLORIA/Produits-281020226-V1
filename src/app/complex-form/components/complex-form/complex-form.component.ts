@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { map, Observable, startWith, tap } from 'rxjs';
 import { ComplexFormService } from '../../services/complex-form.service';
+import { confirmEqualValidator } from '../../validators/confirm-equal.validator';
 
 @Component({
   selector: 'app-complex-form',
@@ -37,6 +38,9 @@ export class ComplexFormComponent implements OnInit {
 
   showEmailControl$!: Observable<boolean>;
   showPhoneControl$!: Observable<boolean>;
+
+  showEmailError$!: Observable<boolean>;
+  showPasswordError$!: Observable<boolean>;
 
   constructor(
     private fb: FormBuilder,
@@ -70,21 +74,35 @@ export class ComplexFormComponent implements OnInit {
 
     this.emailControl = this.fb.control('');
     this.confirmEmailControl = this.fb.control('');
-    this.emailForm = this.fb.group({
-      email: this.emailControl,
-      confirm: this.confirmEmailControl,
-    });
+    this.emailForm = this.fb.group(
+      {
+        email: this.emailControl,
+        confirm: this.confirmEmailControl,
+      },
+      {
+        validators: [confirmEqualValidator('email', 'confirm')],
+        // la validation de emailForm ne sera évaluer que lors du blur du formControl
+        // ie que lorsqu'on sort du formControl
+        updateOn: 'blur',
+      }
+    );
 
     this.phoneControl = this.fb.control('');
 
     this.passwordControl = this.fb.control('', Validators.required);
     this.confirmPasswordControl = this.fb.control('', Validators.required);
 
-    this.loginInfoForm = this.fb.group({
-      username: ['', Validators.required],
-      password: this.passwordControl,
-      confirmPassword: this.confirmPasswordControl,
-    });
+    this.loginInfoForm = this.fb.group(
+      {
+        username: ['', Validators.required],
+        password: this.passwordControl,
+        confirmPassword: this.confirmPasswordControl,
+      },
+      {
+        validators: [confirmEqualValidator('password', 'confirmPassword')],
+        updateOn: 'blur',
+      }
+    );
   }
 
   initFormObservable() {
@@ -147,6 +165,27 @@ export class ComplexFormComponent implements OnInit {
           this.setPhoneValidators(showPhoneControl)
         )
       ));
+    // PENDING : pour les validators asynchrones
+    this.showEmailError$ = this.emailForm.statusChanges.pipe(
+      map(
+        (status) =>
+          status === 'INVALID' &&
+          this.emailControl.value &&
+          this.confirmEmailControl.value
+      )
+      // this.emailControl.value && this.confirmEmailControl.value ici on vérifie en plus qu'il y a une valeur dans chaque champ
+      // avant d'émettre
+    );
+
+    this.showPasswordError$ = this.loginInfoForm.statusChanges.pipe(
+      map(
+        (status) =>
+          status === 'INVALID' &&
+          this.passwordControl.value &&
+          this.confirmPasswordControl.value && 
+          this.loginInfoForm.hasError('confirmEqual')
+      )
+    );
   }
 
   private setEmailValidators(showEmailControl: boolean) {
@@ -184,23 +223,26 @@ export class ComplexFormComponent implements OnInit {
   }
 
   onSubmitForm() {
-    console.log(this.mainForm.value)
+    console.log(this.mainForm.value);
     // desactive le bouton et met en place le spinner avec loading true- - quand l'utilisateur clique sur le bouton
     this.loading = true;
     // this.mainForm.value correspond bien ici au type d'objet complexForm en paramètre dans la methode du service
-    this.complexFormService.saveUserInfo(this.mainForm.value).pipe(
-      tap((saved) => {
-        this.loading = false;
-        if (saved) {
-          this.resetForm();
-          // this.mainForm.reset();
-          // this.contactPreferenceControl.patchValue('email'); // réinjecte la valeur par défaut du radio que reset aura éffacé aussi
-          // attention patchValue emet un observable
-        } else {
-          console.error("Echec de l'enregistrement ");
-        }
-      })
-    ).subscribe();
+    this.complexFormService
+      .saveUserInfo(this.mainForm.value)
+      .pipe(
+        tap((saved) => {
+          this.loading = false;
+          if (saved) {
+            this.resetForm();
+            // this.mainForm.reset();
+            // this.contactPreferenceControl.patchValue('email'); // réinjecte la valeur par défaut du radio que reset aura éffacé aussi
+            // attention patchValue emet un observable
+          } else {
+            console.error("Echec de l'enregistrement ");
+          }
+        })
+      )
+      .subscribe();
   }
 
   private resetForm() {

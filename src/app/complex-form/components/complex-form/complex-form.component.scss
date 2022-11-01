@@ -1,3 +1,10 @@
+mat-card {
+  width: 70%;
+  margin: auto;
+  mat-card-title {
+    text-align: center;
+  }
+}
 mat-form-field {
     width: 45%;
     &.full-width {
@@ -13,7 +20,7 @@ mat-form-field {
   }
   
   .form-card {
-    margin: 20px 0;
+    margin: 20px auto;
   }
   
   .mat-radio-button ~ .mat-radio-button {
