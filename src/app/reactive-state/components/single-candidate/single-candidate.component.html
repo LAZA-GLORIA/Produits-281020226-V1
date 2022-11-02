@@ -1,1 +1,56 @@
-<p>single-candidate works!</p>
+<mat-card>
+  <!-- ng-container permet de poser des directives structurelles comme *ngIf ou *ngFor
+    sans avoir à créer une dic supplémentaire -->
+  <ng-container *ngIf="candidate$ | async as candidate">
+    <img
+      [src]="candidate.imageUrl"
+      [alt]="candidate.title + ' ' + 'Lieu : ' + candidate.department"
+    />
+    <div class="employee-info">
+      <h1>{{ candidate.title }} {{ candidate.department }}</h1>
+      <h2>
+        {{ candidate.description }}, {{ candidate.createdDate }} chez
+        {{ candidate.snaps }}
+      </h2>
+    </div>
+  </ng-container>
+  <mat-card-actions>
+    <mat-spinner *ngIf="loading$ | async; else buttons"></mat-spinner>
+    <!-- ng-template permet de poser un élément dans mon DOM qui par défaut n'est pas affiché 
+    grâce à une référence locale-->
+    <ng-template #buttons>
+      <div class="action-buttons">
+        <button mat-flat-button color="accent" (click)="onHire()">
+          EMBAUCHER
+        </button>
+        <button mat-flat-button color="warn" (click)="onRefuse()">
+          REFUSER
+        </button>
+      </div>
+      <button mat-flat-button color="primary" (click)="onGoBack()">
+        RETOUR
+      </button>
+    </ng-template>
+  </mat-card-actions>
+</mat-card>
+
+<!-- <mat-card>
+    <ng-container *ngIf="candidate$ | async as candidate">
+      <img [src]="candidate.imageUrl" [alt]="candidate.firstName + ' ' + candidate.lastName">
+      <div class="employee-info">
+        <h1>{{ candidate.firstName }} {{ candidate.lastName }}</h1>
+        <h2>{{ candidate.job }}, {{ candidate.department }} chez {{ candidate.company }}</h2>
+        <h3>Contact : {{ candidate.email }}</h3>
+      </div>
+    </ng-container>
+    <mat-card-actions>
+      <mat-spinner *ngIf="loading$ | async; else buttons"></mat-spinner>
+      <ng-template #buttons>
+        <div class="action-buttons">
+          <button mat-flat-button color="accent" (click)="onHire()">EMBAUCHER</button>
+          <button mat-flat-button color="warn" (click)="onRefuse()">REFUSER</button>
+        </div>
+        <button mat-flat-button color="primary" (click)="onGoBack()">RETOUR</button>
+      </ng-template>
+    </mat-card-actions>
+  </mat-card> -->

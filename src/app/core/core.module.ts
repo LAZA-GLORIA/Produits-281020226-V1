@@ -4,6 +4,8 @@ import { SharedModule } from '../shared/shared.module';
 import { HeaderComponent } from './components/header/header.component';
 import { HomeComponent } from './components/home/home.component';
 import { HeaderLateralComponent } from './header-lateral/header-lateral.component';
+import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 
 
@@ -14,7 +16,7 @@ import { HeaderLateralComponent } from './header-lateral/header-lateral.componen
     HeaderLateralComponent
   ],
   imports: [
-    CommonModule, SharedModule
+    CommonModule, SharedModule, RouterModule, HttpClientModule
   ],
   exports: [
     HeaderComponent,

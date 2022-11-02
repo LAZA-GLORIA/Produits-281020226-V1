@@ -1,1 +1,21 @@
-<p>candidate-list works!</p>
+<mat-card>
+  <mat-card-title-group>
+    <mat-card-title> Candidats </mat-card-title>
+  </mat-card-title-group>
+  <mat-spinner *ngIf="loading$ | async"></mat-spinner>
+  <!-- mat-nav-list different de mat-list car on utilise des liens avec la directive mat-list-item
+        pour générer une liste où l'utilisateur peut cliquer sur les différents éléments de la liste -->
+  <mat-nav-list *ngIf="candidates$ | async as candidates">
+    <a
+      *ngFor="let candidate of candidates"
+      mat-list-item
+      [routerLink]="candidate.id.toString()"
+    >
+      <img [src]="candidate.imageUrl" [alt]="candidate.title" matListAvatar />
+      <h3 matLine>{{ candidate.title }}</h3>
+      <p matLine>{{ candidate.description }}</p>
+      <!-- <h3 matLine>{{ candidate.firstName }} {{ candidate.lastName }}</h3>
+      <p matLine>{{ candidate.job }} chez {{ candidate.company }}</p> -->
+    </a>
+  </mat-nav-list>
+</mat-card>

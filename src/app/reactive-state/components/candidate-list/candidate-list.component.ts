@@ -5,6 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Candidate } from '../../models/candidate.model';
 import { CandidatesService } from '../../services/candidates.service';
 
 @Component({
@@ -17,9 +18,19 @@ export class CandidateListComponent implements OnInit {
   // @Input() obj!: { firstName: string, lastName: string };
 
   loading$!: Observable<boolean>;
+  candidates$!: Observable<Candidate[]>;
   constructor(private candidatesService: CandidatesService) {}
 
   ngOnInit(): void {
+    this.initObservables();
+    // this.loading$ = this.candidatesService.loading$;
+    this.candidatesService.getCandidatesFromServer();
+  }
+
+  // Attention une méthode private ne doit pas être appelée depuis le template
+  // mieux de faire une methode quand on initialise plusieurs observables
+  private initObservables(){
     this.loading$ = this.candidatesService.loading$;
+    this.candidates$ = this.candidatesService.candidates$;
   }
 }
