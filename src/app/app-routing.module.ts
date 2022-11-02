@@ -12,6 +12,13 @@ const routes: Routes = [
         (m) => m.ComplexFormModule
       ),
   },
+  {
+    path: 'reactive-state',
+    loadChildren: () =>
+      import('./reactive-state/reactive-state.module').then(
+        (m) => m.ReactiveStateModule
+      ),
+  },
   { path: '**', redirectTo: '/home', pathMatch: 'full' },
 ];
 
