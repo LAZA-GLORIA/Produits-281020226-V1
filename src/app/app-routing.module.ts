@@ -13,6 +13,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'axyus-form',
+    loadChildren: () =>
+      import('./axyus-form/axyus-form.module').then(
+        (m) => m.AxyusFormModule
+      ),
+  },
+  {
     path: 'reactive-state',
     loadChildren: () =>
       import('./reactive-state/reactive-state.module').then(

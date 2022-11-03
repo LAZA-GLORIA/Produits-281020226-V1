@@ -1,0 +1,112 @@
+<mat-card [formGroup]="mainForm" (ngSubmit)="valider()">
+  <div formGroupName="infosPerso">
+    <mat-card-subtitle> Mes Informations Personnelles</mat-card-subtitle>
+    <div class="form-row-one">
+      <div class="form-label">
+        <label>Genre</label>
+        <mat-form-field appearance="outline">
+          <mat-label>Genre</mat-label>
+          <mat-select matInput formControlName="genre">
+            <mat-option value="homme">Homme</mat-option>
+            <mat-option value="femme">Femme</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="form-label">
+        <label>Nom</label>
+        <mat-form-field appearance="outline">
+          <mat-label>Nom</mat-label>
+          <input type="text" matInput formControlName="nom" />
+          <mat-error> Ce champ est requis </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="form-label">
+        <label>Prénom</label>
+        <mat-form-field appearance="outline">
+          <mat-label>Prénom</mat-label>
+          <input type="text" matInput formControlName="prenom" />
+          <mat-error> Ce champ est requis </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="form-row-two">
+      <div class="form-label">
+        <label>NIR</label>
+        <mat-form-field appearance="outline" style="width: 15vw">
+          <mat-label>NIR</mat-label>
+          <input type="text" matInput formControlName="nir" />
+        </mat-form-field>
+      </div>
+      <div class="form-label">
+        <label>Adresse mail</label>
+        <!-- make the field 50% of the Viewport Width -->
+        <mat-form-field appearance="outline" style="width: 40vw">
+          <mat-label>NIR</mat-label>
+          <input type="text" matInput formControlName="email" />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="form-row-three">
+      <div class="form-label">
+        <label>Pays visités</label>
+        <!-- make the field 50% of the Viewport Width -->
+        <mat-form-field appearance="outline" style="width: 72vw">
+          <!-- <mat-label>Pays visités</mat-label> -->
+          <input type="text" matInput formControlName="paysvisites" />
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-enfant">
+    <div class="form-btn-ajouter">
+      <mat-card-subtitle> Enfants</mat-card-subtitle>
+      <button mat-raised-button color="primary" (click)="ajouterEnfant()">
+        Ajouter un enfant
+      </button>
+    </div>
+
+    <ng-container
+      formArrayName="enfantsInfosArray"
+      *ngFor="let item of apiEnfants.controls; let i = index"
+    >
+      <!-- ngFor a besoin de savoir où je suis au niveau de la boucle d'où l'index -->
+      <ng-container [formGroupName]="i">
+        <div class="form-row-enfant">
+          <div class="form-label">
+            <label>Genre</label>
+            <mat-form-field appearance="outline" style="width: 100%">
+              <mat-label>Genre</mat-label>
+              <mat-select matInput formControlName="genreenfant">
+                <mat-option value="homme">Garçon</mat-option>
+                <mat-option value="femme">Fille</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-label">
+            <label>Nom</label>
+            <mat-form-field appearance="outline" style="width: 20vw">
+              <mat-label>Nom</mat-label>
+              <input type="text" matInput formControlName="nomenfant" />
+              <mat-error> Ce champ est requis </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-label">
+            <label>Prénom</label>
+            <mat-form-field appearance="outline" style="width: 20vw">
+              <mat-label>Prénom</mat-label>
+              <input type="text" matInput formControlName="prenomenfant" />
+              <mat-error> Ce champ est requis </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-btn-supprimer">
+            <button mat-raised-button color="warn" (click)="supprimer(i)">Supprimer</button>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+  <div class="form-btn-valider">
+    <button mat-raised-button color="primary">Valider</button>
+  </div>
+</mat-card>

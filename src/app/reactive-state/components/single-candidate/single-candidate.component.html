@@ -9,9 +9,11 @@
     <div class="employee-info">
       <h1>{{ candidate.title }} {{ candidate.department }}</h1>
       <h2>
-        {{ candidate.description }}, {{ candidate.createdDate }} chez
-        {{ candidate.snaps }}
+        {{ candidate.description }}
       </h2>
+      <p> {{ candidate.createdDate }}</p>
+      <p> Snaps :
+        {{ candidate.snaps }}</p>
     </div>
   </ng-container>
   <mat-card-actions>

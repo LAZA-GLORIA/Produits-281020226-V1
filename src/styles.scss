@@ -2,3 +2,7 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 1em 0 0em 0;
+}

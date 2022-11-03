@@ -1,6 +1,21 @@
 <mat-card>
   <mat-card-title-group>
     <mat-card-title> Candidats </mat-card-title>
+    <div class="search-form">
+      <mat-form-field appearance="fill">
+        <input matInput type="text" [formControl]="searchControl" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-select [formControl]="searchTypeControl">
+          <mat-option
+            *ngFor="let option of searchTypeOptions"
+            [value]="option.value"
+            >{{ option.label }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </div>
   </mat-card-title-group>
   <mat-spinner *ngIf="loading$ | async"></mat-spinner>
   <!-- mat-nav-list different de mat-list car on utilise des liens avec la directive mat-list-item
@@ -14,6 +29,7 @@
       <img [src]="candidate.imageUrl" [alt]="candidate.title" matListAvatar />
       <h3 matLine>{{ candidate.title }}</h3>
       <p matLine>{{ candidate.description }}</p>
+      <p matLine>{{ candidate.department }}</p>
       <!-- <h3 matLine>{{ candidate.firstName }} {{ candidate.lastName }}</h3>
       <p matLine>{{ candidate.job }} chez {{ candidate.company }}</p> -->
     </a>
